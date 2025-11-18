@@ -2,15 +2,18 @@
   "version": 2,
   "buildCommand": "yarn build",
   "installCommand": "yarn install",
+  "engines": {
+    "node": "18.x"
+  },
   "functions": {
-    "index.ts": {
-      "runtime": "@vercel/node"
+    "api/index.ts": {
+      "runtime": "@vercel/node@2.15.0"
     }
   },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.ts"
+      "destination": "/api/index"
     }
   ]
 }
