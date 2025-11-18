@@ -1,8 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+</script>
 
 <template>
-  <h1>Calculator</h1>
+  <RouterView />
   
 </template>
 
-<style scoped></style>
+<style>
+*{
+  box-sizing: border-box;
+}
+body{
+  padding: 0px;
+  margin: 0px;
+}
+</style>
