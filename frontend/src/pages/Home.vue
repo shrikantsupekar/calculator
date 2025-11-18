@@ -21,15 +21,23 @@
         />
       </div>
     </div>
+    <div class="show-logs-btn">
+      <RouterLink to="/logs">
+        <button>View Audit Logs</button>
+      </RouterLink>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CalcButton from '@/components/CalcButton.vue'
+import config from '@/config'
 
 const input = ref('')
 const inputRef = ref(null)
+const userId = localStorage.getItem('userId') || crypto.randomUUID()
+localStorage.setItem('userId', userId)
 
 // keys with layout properties like width or grid span
 const keys = [
@@ -51,16 +59,96 @@ const keys = [
   { label: '=', style: 'grid-column: span 4' },
 ]
 
+let currentNumber = ''
+
+const operators = new Set(['+', '-', '*', '/'])
+const nonRepeatableKeys = new Set(['+', '.', '/', '*', '-', '='])
+
 const onButtonPress = (value) => {
+  if (isNumericInput(value)) {
+    appendToCurrentNumber(value)
+  }
+
   if (value === '=') {
-    try {
-      input.value = eval(input.value)
-    } catch {
-      input.value = 'Error'
-    }
-  } else if(value !== input.value[input.value.length-1] || !['+','.','/','*','-'].includes(value)) {
+    handleEquals()
+    return
+  }
+
+  if (operators.has(value)) {
+    handleOperator(value)
+  }
+
+  appendToInput(value)
+}
+
+function isNumericInput(value) {
+  return !isNaN(Number(value)) || value === '.'
+}
+
+function appendToCurrentNumber(value) {
+  // build up the current multi-digit number, but don't log yet
+  currentNumber += value
+}
+
+function handleEquals() {
+  try {
+    input.value = eval(input.value)
+  } catch {
+    input.value = 'Error'
+  }
+
+  flushCurrentNumber()
+  addLog('equalsPressed', input.value)
+}
+
+function handleOperator(value) {
+  // when an operator is pressed, log the completed number and the operator
+  flushCurrentNumber()
+  addLog('operatorEntered', value)
+}
+
+function flushCurrentNumber() {
+  if (!currentNumber) {
+    return
+  }
+  addLog('numberEntered', currentNumber)
+  currentNumber = ''
+}
+
+function appendToInput(value) {
+  const lastChar = input.value[input.value.length - 1]
+  const isBlockedRepeat = lastChar === value && nonRepeatableKeys.has(value)
+
+  if (!isBlockedRepeat) {
     input.value += value
   }
+}
+
+function addLog(action, value) {
+  const id = getNextCounter()
+  const timestamp = Date.now()
+
+  const payload = {
+    id: String(id),
+    timestamp,
+    event: action,
+    value: String(value),
+  }
+
+  fetch(`${config.API_URL}/logs?userId=${encodeURIComponent(userId)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {
+    // swallow logging errors
+  })
+}
+
+function getNextCounter() {
+  let counter = Number(localStorage.getItem('counter') || 0)
+  counter++
+  localStorage.setItem('counter', counter)
+  return counter
 }
 
 const allowedKeys = /^[0-9+\-*/.]$/
@@ -72,6 +160,8 @@ function allowCalcKeys(e) {
     if (e.key === '=') {
       onButtonPress('=')
     }
+  } else {
+    onButtonPress(e.key)
   }
 }
 
@@ -131,5 +221,22 @@ onMounted(() => {
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.show-logs-btn {
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  padding: 10px;
+}
+.show-logs-btn button {
+  color: blue;
+  background: #ffffff;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid gray;
+  font-weight: 400;
+  border-radius: 6px;
+  cursor: pointer;
 }
 </style>
