@@ -1,0 +1,24 @@
+{
+  "name": "calculator-stack",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "setup": "yarn install",
+    "dev": "run-p dev:*",
+    "dev:frontend": "yarn workspace calculator dev",
+    "dev:backend": "yarn workspace backend start:dev",
+    "build": "run-s build:*",
+    "build:frontend": "yarn workspace calculator build",
+    "build:backend": "yarn workspace backend build",
+    "lint": "run-s lint:*",
+    "lint:frontend": "yarn workspace calculator lint",
+    "lint:backend": "yarn workspace backend lint"
+  },
+  "devDependencies": {
+    "npm-run-all2": "^8.0.4"
+  }
+}
