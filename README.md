@@ -37,7 +37,7 @@ The root `yarn install` bootstraps both workspaces (`frontend`, `backend`).
 
 ## Live Demo
 
-- Frontend: https://your-deployment-url.example.com
+- Frontend: https://calculator-frontend-smartlead.vercel.app/
 
 ## Running the Project
 

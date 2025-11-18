@@ -65,7 +65,7 @@ yarn type-check   # vue-tsc --build
 
 ## Deployment
 
-- Dummy SPA URL (replace when live): https://app-placeholder.example.com
+- SPA URL: https://calculator-frontend-smartlead.vercel.app/
 - Build with `yarn build` and deploy the `dist/` folder to any static host (Vercel, Netlify, S3, etc.). Ensure `config/index.ts` points to your production API base.
 
 ## Troubleshooting

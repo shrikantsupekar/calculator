@@ -29,7 +29,7 @@ The server enables CORS by default. Update the port inside `src/main.ts` if you 
 
 ## Deployment
 
-- Dummy API URL (replace once deployed): https://api-placeholder.example.com
+- API URL: https://calculator-backend-gray.vercel.app
 
 ## Routes
 
@@ -92,7 +92,7 @@ curl -X POST "http://localhost:3000/logs?userId=test-user" \
 curl "http://localhost:3000/logs?userId=test-user&page=1&limit=10"
 ```
 
-For the deployed API swap the base URL with `https://api-placeholder.example.com`.
+For the deployed API swap the base URL with `https://calculator-backend-gray.vercel.app`.
 
 ## Notes
 
