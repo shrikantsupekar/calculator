@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install",
+  "functions": {
+    "index.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.ts"
+    }
+  ]
+}
