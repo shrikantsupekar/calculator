@@ -2,12 +2,9 @@
   "version": 2,
   "buildCommand": "yarn build",
   "installCommand": "yarn install",
-  "engines": {
-    "node": "18.x"
-  },
   "functions": {
     "api/index.ts": {
-      "runtime": "@vercel/node@2.15.0"
+      "runtime": "@vercel/node@5.5.6"
     }
   },
   "rewrites": [
