@@ -10,7 +10,7 @@ const config: {
     API_URL: 'http://localhost:3000',
   },
   production: {
-    API_URL: 'http://localhost:3000',
+    API_URL: 'https://calculator-backend-gray.vercel.app',
   },
 }
 
