@@ -7,7 +7,7 @@
           v-model="input"
           ref="inputRef"
           @keypress="allowCalcKeys"
-          @blur="inputRef.focus()"
+          @blur="focusInput"
         />
       </div>
       <div class="calculator-container">
@@ -35,12 +35,17 @@ import CalcButton from '@/components/CalcButton.vue'
 import config from '@/config'
 
 const input = ref('')
-const inputRef = ref(null)
+const inputRef = ref<HTMLInputElement | null>(null)
 const userId = localStorage.getItem('userId') || crypto.randomUUID()
 localStorage.setItem('userId', userId)
 
 // keys with layout properties like width or grid span
-const keys = [
+type CalcKey = {
+  label: string
+  style?: string
+}
+
+const keys: CalcKey[] = [
   { label: '7' },
   { label: '8' },
   { label: '9' },
@@ -61,10 +66,10 @@ const keys = [
 
 let currentNumber = ''
 
-const operators = new Set(['+', '-', '*', '/'])
-const nonRepeatableKeys = new Set(['+', '.', '/', '*', '-', '='])
+const operators = new Set<string>(['+', '-', '*', '/'])
+const nonRepeatableKeys = new Set<string>(['+', '.', '/', '*', '-', '='])
 
-const onButtonPress = (value) => {
+const onButtonPress = (value: string) => {
   if (isNumericInput(value)) {
     appendToCurrentNumber(value)
   }
@@ -81,11 +86,11 @@ const onButtonPress = (value) => {
   appendToInput(value)
 }
 
-function isNumericInput(value) {
+function isNumericInput(value: string) {
   return !isNaN(Number(value)) || value === '.'
 }
 
-function appendToCurrentNumber(value) {
+function appendToCurrentNumber(value: string) {
   // build up the current multi-digit number, but don't log yet
   currentNumber += value
 }
@@ -101,7 +106,7 @@ function handleEquals() {
   addLog('equalsPressed', input.value)
 }
 
-function handleOperator(value) {
+function handleOperator(value: string) {
   // when an operator is pressed, log the completed number and the operator
   flushCurrentNumber()
   addLog('operatorEntered', value)
@@ -115,7 +120,7 @@ function flushCurrentNumber() {
   currentNumber = ''
 }
 
-function appendToInput(value) {
+function appendToInput(value: string) {
   const lastChar = input.value[input.value.length - 1]
   const isBlockedRepeat = lastChar === value && nonRepeatableKeys.has(value)
 
@@ -124,7 +129,9 @@ function appendToInput(value) {
   }
 }
 
-function addLog(action, value) {
+type LogEvent = 'numberEntered' | 'operatorEntered' | 'equalsPressed'
+
+function addLog(action: LogEvent, value: string) {
   const id = getNextCounter()
   const timestamp = Date.now()
 
@@ -147,13 +154,13 @@ function addLog(action, value) {
 function getNextCounter() {
   let counter = Number(localStorage.getItem('counter') || 0)
   counter++
-  localStorage.setItem('counter', counter)
+  localStorage.setItem('counter', String(counter))
   return counter
 }
 
 const allowedKeys = /^[0-9+\-*/.]$/
 
-function allowCalcKeys(e) {
+function allowCalcKeys(e: KeyboardEvent) {
   // If character NOT allowed → block it
   if (!allowedKeys.test(e.key)) {
     e.preventDefault()
@@ -165,8 +172,12 @@ function allowCalcKeys(e) {
   }
 }
 
+const focusInput = () => {
+  inputRef.value?.focus()
+}
+
 onMounted(() => {
-  inputRef.value.focus()
+  focusInput()
 })
 </script>
 

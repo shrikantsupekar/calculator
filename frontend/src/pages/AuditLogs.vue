@@ -24,12 +24,12 @@
 import { ref, onMounted, watch } from 'vue'
 import config from '@/config'
 
-const jsonBlock = ref(null)
+const jsonBlock = ref<HTMLElement | null>(null)
 
 const userId = localStorage.getItem('userId') || crypto.randomUUID()
 localStorage.setItem('userId', userId)
 
-const data = ref([])
+const data = ref<Record<string, unknown>[]>([])
 const pagination = ref({
   total: 0,
   page: 1,
@@ -53,8 +53,10 @@ async function loadData() {
   renderJson(data.value)
 }
 
-function renderJson(obj) {
-  if (!jsonBlock.value) return
+function renderJson(obj: unknown) {
+  if (!jsonBlock.value) {
+    return
+  }
 
   jsonBlock.value.textContent = JSON.stringify(obj, null, 2)
 }
